@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+datasets = "*"
+weaviate-client = "*"
+langchain-huggingface = "*"
+sentence-transformers = "*"
+langchain-weaviate = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
