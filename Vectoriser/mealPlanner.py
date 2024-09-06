@@ -17,6 +17,7 @@ embeddings = HuggingFaceEmbeddings(
     model_name=embedding_model_name
 )
 
+# Initialise the vector store
 vectorstore = WeaviateVectorStore(client=weaviate_client, index_name="RecipeV4", text_key="title", embedding=embeddings)
 
 # Meal planner
@@ -29,7 +30,7 @@ def meal_planner():
         any_other = input("Do you have any other preference? (leave blank if you don't have any preference): ")
         query = f"{meal_type} {ingredients} {nutrition_goals} {any_other}"
     
-        results = vectorstore.similarity_search(query, k=2)
+        results = vectorstore.similarity_search(query, k=4)
     
         print("\nHere are some meal options for you:\n")
         for i, result in enumerate(results):

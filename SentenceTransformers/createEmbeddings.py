@@ -3,6 +3,7 @@ from sentence_transformers import SentenceTransformer
 import weaviate
 from weaviate.auth import Auth
 import weaviate.classes.config as wvcc
+from sklearn.preprocessing import normalize
 import time
 
 df = load_dataset("Shengtao/recipe")
@@ -15,7 +16,7 @@ def generate_embeddings(examples):
     combined_text = [" ".join([f"{col}: {examples[col][i]}" for col in recipes.column_names if col != 'embeddings']) for i in range(len(examples[recipes.column_names[0]]))]
 
     embeddings = model.encode(combined_text, show_progress_bar=True)
-    examples["combined_text"] = combined_text
+    embeddings = normalize(embeddings)
     examples["embedding"] = [embedding.tolist() for embedding in embeddings]
     
     return examples
@@ -24,7 +25,6 @@ recipes = recipes.map(generate_embeddings, batched=True)
 
 
 # Constants
-CHUNK_SIZE = 1000  # Number of rows per chunk
 MAX_RETRIES = 5  # Maximum number of retries
 WEAVIATE_CLUSTER = "https://q6zqx8zbrxcmb6mg4lklqw.c0.asia-southeast1.gcp.weaviate.cloud"
 WEAVIATE_KEY = "tgCsONAsEGhXZam1jeGS6xUThPmxfToGT5FE"
@@ -49,6 +49,9 @@ collection = weaviate_client.collections.create(
             name="embedding",
             data_type=wvcc.DataType.NUMBER_ARRAY
         )],
+    vector_index_config=wvcc.Configure.VectorIndex.hnsw(
+        distance_metric=wvcc.VectorDistances.COSINE
+    ),
 )
 
 try:

@@ -9,6 +9,9 @@ weaviate-client = "*"
 langchain-huggingface = "*"
 sentence-transformers = "*"
 langchain-weaviate = "*"
+langchain = "*"
+langchain-community = "*"
+openai = "*"
 
 [dev-packages]
 

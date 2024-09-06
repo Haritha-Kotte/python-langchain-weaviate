@@ -20,7 +20,7 @@ embeddings = HuggingFaceEmbeddings(
 vectorstore = WeaviateVectorStore(client=weaviate_client, index_name="RecipeV4", text_key="title", embedding=embeddings)
 
 # Perform a search query
-query = "chocolate cookie recipe"
+query = "lunch with high protien potato recipe"
 results = vectorstore.similarity_search(query, k=3)  # Retrieve top similar results
 
 print("\nHere are some meal options for you:\n")
