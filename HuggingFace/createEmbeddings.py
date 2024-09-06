@@ -4,12 +4,18 @@ import weaviate.classes.config as wvcc
 from weaviate.auth import Auth
 from langchain_huggingface import HuggingFaceEmbeddings
 import time
+from dotenv import load_dotenv
+import os
+
+# Load the .env file
+load_dotenv()
+
+# Access environment variables
+cluster_url = os.getenv('WEAVIATE_CLUSTER')
+auth_key = os.getenv('WEAVIATE_KEY')
 
 # Constants
-RATE_LIMIT = 60  # Number of rows per chunk
-WEAVIATE_CLUSTER = "https://q6zqx8zbrxcmb6mg4lklqw.c0.asia-southeast1.gcp.weaviate.cloud"
-WEAVIATE_KEY = "tgCsONAsEGhXZam1jeGS6xUThPmxfToGT5FE"
-# HUGGINGFACE_APIKEY = "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"
+RATE_LIMIT = 60
 
 df = load_dataset("Shengtao/recipe")
 recipes = df['train']
@@ -24,8 +30,8 @@ for recipe in recipes:
 
 embedded_doc = embeddings.embed_documents(texts)
 weaviate_client = weaviate.connect_to_weaviate_cloud(
-    cluster_url=WEAVIATE_CLUSTER,
-    auth_credentials=Auth.api_key(WEAVIATE_KEY),
+    cluster_url=cluster_url,
+    auth_credentials=Auth.api_key(auth_key),
     skip_init_checks=True,
 )
 properties = [wvcc.Property(

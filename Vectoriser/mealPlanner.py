@@ -2,13 +2,19 @@ from langchain_weaviate.vectorstores import WeaviateVectorStore
 from langchain_huggingface import HuggingFaceEmbeddings
 import weaviate
 from weaviate.classes.init import Auth
+from dotenv import load_dotenv
+import os
 
-WEAVIATE_CLUSTER = "https://q6zqx8zbrxcmb6mg4lklqw.c0.asia-southeast1.gcp.weaviate.cloud"
-WEAVIATE_KEY = "tgCsONAsEGhXZam1jeGS6xUThPmxfToGT5FE"
+# Load the .env file
+load_dotenv()
+
+# Access environment variables
+cluster_url = os.getenv('WEAVIATE_CLUSTER')
+auth_key = os.getenv('WEAVIATE_KEY')
 
 weaviate_client = weaviate.connect_to_weaviate_cloud(
-    cluster_url=WEAVIATE_CLUSTER, 
-    auth_credentials=Auth.api_key(WEAVIATE_KEY),
+    cluster_url=cluster_url, 
+    auth_credentials=Auth.api_key(auth_key),
     skip_init_checks=True,
 )
 

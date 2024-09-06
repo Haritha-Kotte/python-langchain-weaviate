@@ -12,6 +12,7 @@ langchain-weaviate = "*"
 langchain = "*"
 langchain-community = "*"
 openai = "*"
+dotenv = "*"
 
 [dev-packages]
 

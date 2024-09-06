@@ -5,6 +5,16 @@ from weaviate.auth import Auth
 import weaviate.classes.config as wvcc
 from sklearn.preprocessing import normalize
 import time
+from dotenv import load_dotenv
+import os
+
+# Load the .env file
+load_dotenv()
+
+# Access environment variables
+max_retries = os.getenv('MAX_RETRIES')
+cluster_url = os.getenv('WEAVIATE_CLUSTER')
+auth_key = os.getenv('WEAVIATE_KEY')
 
 df = load_dataset("Shengtao/recipe")
 recipes = df['train']
@@ -23,15 +33,9 @@ def generate_embeddings(examples):
 
 recipes = recipes.map(generate_embeddings, batched=True)
 
-
-# Constants
-MAX_RETRIES = 5  # Maximum number of retries
-WEAVIATE_CLUSTER = "https://q6zqx8zbrxcmb6mg4lklqw.c0.asia-southeast1.gcp.weaviate.cloud"
-WEAVIATE_KEY = "tgCsONAsEGhXZam1jeGS6xUThPmxfToGT5FE"
-
 weaviate_client = weaviate.connect_to_weaviate_cloud(
-    cluster_url=WEAVIATE_CLUSTER,
-    auth_credentials=Auth.api_key(WEAVIATE_KEY),
+    cluster_url=cluster_url,
+    auth_credentials=Auth.api_key(auth_key),
     skip_init_checks=True,
 )
 
@@ -59,7 +63,7 @@ try:
         for index, row in enumerate(recipes):
             data_object = {col: str(row[col]) for col in recipes.column_names if col != "embedding"}
             data_object['embedding'] = row['embedding']
-            for attempt in range(MAX_RETRIES):
+            for attempt in range(max_retries):
                 try:
                     batch.add_object(
                         properties=data_object,
@@ -82,4 +86,3 @@ try:
                 
 finally:
     weaviate_client.close()
-

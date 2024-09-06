@@ -3,22 +3,27 @@ import weaviate.classes.config as wvcc
 from weaviate.auth import Auth
 
 from datasets import load_dataset
+from dotenv import load_dotenv
+import os
 import time
 
-# Constants
-RATE_LIMIT = 10  # Number of rows per chunk
-WEAVIATE_CLUSTER = "https://q6zqx8zbrxcmb6mg4lklqw.c0.asia-southeast1.gcp.weaviate.cloud"
-WEAVIATE_KEY = "tgCsONAsEGhXZam1jeGS6xUThPmxfToGT5FE"
-HUGGINGFACE_NEW_APIKEY = "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"
+# Load the .env file
+load_dotenv()
+
+# Access environment variables
+rate_limit = os.getenv('RATE_LIMIT')
+cluster_url = os.getenv('WEAVIATE_CLUSTER')
+auth_key = os.getenv('WEAVIATE_KEY')
+huggingface_new_apikey = os.getenv('HUGGINGFACE_NEW_APIKEY')
 
 df = load_dataset("Shengtao/recipe")
 recipes = df['train']
 recipes = recipes.select(range(100))
 
 weaviate_client = weaviate.connect_to_weaviate_cloud(
-    cluster_url=WEAVIATE_CLUSTER,
-    auth_credentials=Auth.api_key(WEAVIATE_KEY),
-    headers={"X-HuggingFace-Api-Key": HUGGINGFACE_NEW_APIKEY},
+    cluster_url=cluster_url,
+    auth_credentials=Auth.api_key(auth_key),
+    headers={"X-HuggingFace-Api-Key": huggingface_new_apikey},
     skip_init_checks=True,
 )
 
@@ -40,7 +45,7 @@ collection = weaviate_client.collections.create(
 )
 
 try:
-    with weaviate_client.batch.rate_limit(requests_per_minute=RATE_LIMIT) as batch:  # or <collection>.batch.rate_limit()
+    with weaviate_client.batch.rate_limit(requests_per_minute=rate_limit) as batch:  # or <collection>.batch.rate_limit()
 
         for index, row in enumerate(recipes):
             data_object = {col: str(row[col]) for col in recipes.column_names}
