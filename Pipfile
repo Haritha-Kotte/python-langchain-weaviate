@@ -13,6 +13,8 @@ langchain = "*"
 langchain-community = "*"
 openai = "*"
 dotenv = "*"
+langchain-openai = "*"
+langchain_core = "*"
 
 [dev-packages]
 
