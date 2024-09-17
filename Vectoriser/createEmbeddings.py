@@ -11,7 +11,6 @@ import time
 load_dotenv()
 
 # Access environment variables
-rate_limit = os.getenv('RATE_LIMIT')
 cluster_url = os.getenv('WEAVIATE_CLUSTER')
 auth_key = os.getenv('WEAVIATE_KEY')
 huggingface_new_apikey = os.getenv('HUGGINGFACE_NEW_APIKEY')
@@ -45,7 +44,7 @@ collection = weaviate_client.collections.create(
 )
 
 try:
-    with weaviate_client.batch.rate_limit(requests_per_minute=rate_limit) as batch:  # or <collection>.batch.rate_limit()
+    with weaviate_client.batch.rate_limit(requests_per_minute=10) as batch:  # or <collection>.batch.rate_limit()
 
         for index, row in enumerate(recipes):
             data_object = {col: str(row[col]) for col in recipes.column_names}

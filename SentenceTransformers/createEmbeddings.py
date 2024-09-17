@@ -12,7 +12,6 @@ import os
 load_dotenv()
 
 # Access environment variables
-max_retries = os.getenv('MAX_RETRIES')
 cluster_url = os.getenv('WEAVIATE_CLUSTER')
 auth_key = os.getenv('WEAVIATE_KEY')
 
@@ -63,6 +62,7 @@ try:
         for index, row in enumerate(recipes):
             data_object = {col: str(row[col]) for col in recipes.column_names if col != "embedding"}
             data_object['embedding'] = row['embedding']
+            max_retries = 5
             for attempt in range(max_retries):
                 try:
                     batch.add_object(
